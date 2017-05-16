@@ -1,4 +1,4 @@
-NUMBERED_PAGES_START = 2
+NUMBERED_PAGES_START = 3
 
 CONVERT_OPTS = \
 	-background white \
@@ -9,8 +9,11 @@ CONVERT_OPTS = \
 	-format jpg \
 	-quality 100%
 
-page_images: numbered_page_pdfs cover-page.pdf
-	mogrify $(CONVERT_OPTS) -- *page*.pdf
+page_images: numbered_page_pdfs cover-page.jpg
+	mogrify $(CONVERT_OPTS) -- page-*.pdf
+
+cover-page.jpg: cover-page.pdf
+	convert $< -trim +repage $(CONVERT_OPTS) $@
 
 cover-page.pdf: manifesto.pdf
 	pdftk $< cat 1 output $@
@@ -21,7 +24,7 @@ numbered_page_pdfs: manifesto.pdf
 	rm numbered_pages.pdf
 
 manifesto.pdf:
-	curl -o $@ http://documents.manifestos.org.uk/2015/labour.pdf
+	curl -o $@ http://documents.manifestos.org.uk/2015/conservative.pdf
 
 clean:
 	find . ! -name 'Makefile' -type f -exec rm -f {} +
